@@ -370,14 +370,14 @@ app.get("/dashboard", async (req, res) => {
     const allStories = await Story.find({});
 
     // Get authors for stories to mimic grouping
-    // Grouping logic: Key is author email or ID. EJS iterates keys.
-    // We'll group by userId (email)
+    // Grouping logic: Robust
     for (const s of allStories) {
+      if (!s.userId) continue; // Skip orphan stories
       if (!groupedStories[s.userId]) {
         groupedStories[s.userId] = {
           stories: [],
-          authorName: s.authorName,
-          authorAvatar: s.authorAvatar
+          authorName: s.authorName || 'Unknown',
+          authorAvatar: s.authorAvatar || '/uploads/default.png'
         };
       }
       groupedStories[s.userId].stories.push(s);

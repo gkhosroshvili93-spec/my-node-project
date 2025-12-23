@@ -223,9 +223,10 @@
                 <!-- Active Stories -->
                 <% Object.keys(stories).forEach(userId => { 
                     const data = stories[userId];
-                    const latestStory = data.stories[data.stories.length - 1]; 
-                    // Pass all stories for this user to the modal logic
-                    const userStories = JSON.stringify(data.stories);
+                    // Defensive check: ensure data and data.stories exist
+                    if (data && data.stories && data.stories.length > 0) {
+                        const latestStory = data.stories[data.stories.length - 1]; 
+                        const userStories = JSON.stringify(data.stories);
                 %>
                     <div class="story-card" onclick='openStoryGroup(<%- userStories %>, "<%= userId %>")'>
                         <% if (latestStory.image) { %>
@@ -236,11 +237,12 @@
                              </div>
                         <% } %>
                         <div class="story-overlay">
-                            <img src="<%= data.authorAvatar %>">
+                            <img src="<%= data.authorAvatar || '/uploads/default.png' %>">
                         </div>
-                        <div class="story-author"><%= data.authorName %></div>
+                        <div class="story-author"><%= data.authorName || 'User' %></div>
                     </div>
-                <% }) %>
+                <%  } // end if
+                   }) %>
             </div>
 
             <div class="create-post">
