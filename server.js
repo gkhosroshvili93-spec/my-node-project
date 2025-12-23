@@ -588,11 +588,18 @@ app.get("/chat", async (req, res) => {
     const currentUser = usersMap[req.session.userEmail];
     const friendRequestsCount = (currentUser.friendRequestsReceived || [])
       .length;
+    
+    // Fix for chat.ejs filtering
+    const friendsList = currentUser.friends || [];
 
     res.render("chat", {
       user: currentUser,
+      currentUser, // EJS uses currentUser in some places, user in others, let's duplicate to be safe or just standardise later. Chat.ejs uses currentUser at line 642.
       users: usersMap,
       friendRequestsCount,
+      friendsList,
+      activeChatPartner: 'global', // Default
+      messages: [] // Default for first load
     });
   } catch (e) {
     console.error(e);
@@ -733,8 +740,27 @@ app.get("/user/:email", async (req, res) => {
   }
 });
 
+// Redirect /profile to /user/:myEmail
+app.get("/profile", (req, res) => {
+    if (!req.session.isAuthenticated) return res.redirect("/login");
+    res.redirect("/user/" + req.session.userEmail);
+});
+
+// Settings Page
+app.get("/settings", async (req, res) => {
+    if (!req.session.isAuthenticated) return res.redirect("/login");
+    try {
+        const user = await User.findOne({ email: req.session.userEmail });
+        res.render("settings", { user });
+    } catch (e) {
+        console.error(e);
+        res.redirect("/dashboard");
+    }
+});
+
 // Friend Actions
 app.get("/friends/add/:email", async (req, res) => {
+
   if (!req.session.isAuthenticated) return res.redirect("/login");
   const targetEmail = req.params.email;
   const myEmail = req.session.userEmail;

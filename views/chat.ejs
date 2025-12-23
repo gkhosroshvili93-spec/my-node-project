@@ -719,7 +719,7 @@
         };
 
         // Filter Logic
-        const friendsList = <%- JSON.stringify(friendsList || []) %>;
+        const friendsList = <%- JSON.stringify(locals.friendsList || []) %>;
         const filterBtns = document.querySelectorAll('.filter-btn');
         const userItems = document.querySelectorAll('.user-item');
         const searchInput = document.getElementById('searchInput');
