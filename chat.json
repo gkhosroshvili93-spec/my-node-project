@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1766012829929,
+    "userEmail": "xosgio2@gmail.com",
+    "username": "xo999sr",
+    "avatar": "/uploads/1766011236944.jpeg",
+    "message": "4b9c318bd7a4c7206e7bd59d8e93bb8d:c9be182e3015bbde78d2bd50aa91ec27",
+    "timestamp": "15:07",
+    "reactions": [
+      "gkhosroshvili93@gmail.com"
+    ]
+  },
+  {
+    "id": 1766013657298,
+    "sender": "gkhosroshvili93@gmail.com",
+    "userEmail": "gkhosroshvili93@gmail.com",
+    "username": "admin",
+    "avatar": "/uploads/default.png",
+    "message": "db2789bacbc3976dc1e18d57f84968a7:844f65763d9aa3bd53a0d5871c22b5b7",
+    "receiver": "test@gmail.com",
+    "timestamp": "15:20",
+    "reactions": []
+  },
+  {
+    "id": 1766013660593,
+    "sender": "gkhosroshvili93@gmail.com",
+    "userEmail": "gkhosroshvili93@gmail.com",
+    "username": "admin",
+    "avatar": "/uploads/default.png",
+    "message": "5f741cd6bab9fc0feaa2a329bc8fa59c:1ba5d3c922fa6c55909e372846fea108",
+    "receiver": "xosgio2@gmail.com",
+    "timestamp": "15:21",
+    "reactions": []
+  },
+  {
+    "id": 1766442117952,
+    "sender": "adolfi@gmail.com",
+    "userEmail": "adolfi@gmail.com",
+    "username": "adolf999",
+    "avatar": "/uploads/1766441953221.png",
+    "message": "2fd85998fbf7efbe705b40d3d439c4a0:422bb73c4f63e616571b6b557001a4fe91cd72ad80f10b7cbef0aca150878448c5b89a390f47488b169c2abe5ef17d6c",
+    "receiver": "iosebistalin@gmail.com",
+    "timestamp": "14:21",
+    "reactions": []
+  },
+  {
+    "id": 1766442927453,
+    "sender": "iosebistalin@gmail.com",
+    "userEmail": "iosebistalin@gmail.com",
+    "username": "Ioseb777",
+    "avatar": "/uploads/1766441848369.png",
+    "message": "a6f59d97541de7d5f41ed48c7d749993:594352891c7eb9512c441475a395f12b3cbe4be4502a61dc93b6b7ae4b2ca0eb",
+    "receiver": "global",
+    "timestamp": "14:35"
+  }
+]

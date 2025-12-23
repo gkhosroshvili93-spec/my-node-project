@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FA შემოწმება</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>ორ-ეტაპიანი აუთენტიფიკაცია</h2>
+        <p>შეიყვანეთ კოდი Google Authenticator-დან</p>
+
+        <% if (error) { %>
+            <div class="error-message"><%= error %></div>
+        <% } %>
+
+        <form action="/verify-2fa" method="POST">
+            <div class="form-group">
+                <input type="text" name="token" placeholder="000 000" autocomplete="off" required>
+            </div>
+            <button type="submit">შესვლა</button>
+        </form>
+    </div>
+</body>
+</html>

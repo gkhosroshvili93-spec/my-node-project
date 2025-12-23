@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>შესვლა - BtaSocialPortal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; overflow: hidden; background: #f0f2f5; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        
+        #particleCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        
+        .main-wrapper { display: flex; width: 900px; max-width: 95%; z-index: 10; align-items: center; justify-content: space-between; gap: 40px; }
+        
+        /* Left Side: Branding */
+        .brand-section { flex: 1; color: #1877f2; text-shadow: 0 2px 10px rgba(255,255,255,0.8); }
+        .brand-logo { font-size: 50px; font-weight: bold; margin-bottom: 10px; }
+        .brand-tagline { font-size: 24px; color: #333; line-height: 1.4; }
+        
+        /* Right Side: Login Card */
+        .auth-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 30px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); width: 380px; text-align: center; border: 1px solid rgba(255,255,255,0.5); }
+        
+        .form-group { margin-bottom: 15px; text-align: left; }
+        input[type="email"], input[type="password"], input[type="text"] { width: 100%; padding: 14px 16px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; outline: none; transition: 0.2s; }
+        input:focus { border-color: #1877f2; box-shadow: 0 0 0 2px rgba(24,119,242,0.2); }
+        
+        .btn-login { width: 100%; background: #1877f2; color: white; border: none; padding: 12px; font-size: 20px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .btn-login:hover { background: #166fe5; }
+        
+        .divider { margin: 20px 0; border-bottom: 1px solid #dadde1; }
+        
+        .btn-create { display: inline-block; background: #42b72a; color: white; padding: 10px 20px; font-size: 17px; font-weight: bold; border-radius: 6px; text-decoration: none; transition: 0.2s; }
+        .btn-create:hover { background: #36a420; }
+        
+        .forgot-pass { color: #1877f2; text-decoration: none; font-size: 14px; margin-top: 15px; display: block; }
+        .forgot-pass:hover { text-decoration: underline; }
+        
+        .error-msg { background: #ffebe8; border: 1px solid #dd3c10; color: #dd3c10; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px; text-align: left; }
+
+        .validation-warning { color: #dd3c10; font-size: 12px; margin-top: 5px; display: none; }
+        
+        @media (max-width: 800px) {
+            .main-wrapper { flex-direction: column; gap: 20px; }
+            .brand-section { text-align: center; }
+            .brand-logo { font-size: 40px; }
+            .brand-tagline { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particleCanvas"></canvas>
+
+    <div class="main-wrapper">
+        <div class="brand-section">
+            <div class="brand-logo"><span style="color: #ff4757;">Bta</span>SocialPortal</div>
+            <div class="brand-tagline">დაუკავშირდით მეგობრებს და გააზიარეთ თქვენი მომენტები.</div>
+        </div>
+        
+        <div class="auth-card">
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="error-msg">⚠️ <%= error %></div>
+            <% } %>
+
+            <form action="/login" method="POST">
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="ელ.ფოსტა" required value="<%= typeof email !== 'undefined' ? email : '' %>">
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="პაროლი" required>
+                </div>
+                
+                <div class="form-group" style="background:#f0f2f5; padding:10px; border-radius:6px; margin-bottom:15px;">
+                     <div style="font-size:12px; color:#666; margin-bottom:5px;">უსაფრთხოების კოდი</div>
+                     <div style="display:flex; gap:10px; align-items:center;">
+                         <img src="/captcha" onclick="this.src='/captcha?'+Math.random()" style="height:35px; border-radius:4px; cursor:pointer;" title="შეცვლა">
+                         <input type="text" name="captcha" placeholder="კოდი" required autocomplete="off" style="padding:8px;">
+                     </div>
+                </div>
+
+                <button type="submit" class="btn-login">შესვლა</button>
+            </form>
+            
+            <a href="/forgot-password" class="forgot-pass">დაგავიწყდათ პაროლი?</a>
+            <div class="divider"></div>
+            <a href="/register" class="btn-create">ახალი ანგარიშის შექმნა</a>
+        </div>
+    </div>
+
+    <script>
+        // Canvas Effect
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let particles = [];
+        
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = (Math.random() - 0.5) * 1;
+                this.size = Math.random() * 3 + 1;
+                this.color = `rgba(24, 119, 242, ${Math.random() * 0.5})`;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if(this.x < 0 || this.x > width) this.vx *= -1;
+                if(this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        function initParticles() {
+            particles = [];
+            for(let i=0; i<100; i++) particles.push(new Particle());
+        }
+        
+        function animate() {
+            ctx.clearRect(0,0,width,height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+                // Connect
+                particles.forEach(p2 => {
+                    let dx = p.x - p2.x;
+                    let dy = p.y - p2.y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    if(dist < 100) {
+                        ctx.strokeStyle = `rgba(24, 119, 242, ${0.1 - dist/1000})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                });
+            });
+            requestAnimationFrame(animate);
+        }
+        
+        window.addEventListener('resize', resize);
+        resize();
+        initParticles();
+        animate();
+    </script>
+    <%- include('partials/warning') %>
+</body>
+</html>

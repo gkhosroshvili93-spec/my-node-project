@@ -1,0 +1,34 @@
+<style>
+/* Copyright Warning Styles */
+.copyright-warning-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.copyright-warning-btn {
+    background-color: #ff0000;
+    color: white;
+    border: 2px solid #ffffff;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    animation: flash-red 1s infinite alternate;
+    cursor: default;
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+@keyframes flash-red {
+    0% { background-color: #ff0000; transform: scale(1); }
+    100% { background-color: #cc0000; transform: scale(1.05); box-shadow: 0 0 15px rgba(255, 0, 0, 0.7); }
+}
+</style>
+
+<div class="copyright-warning-container">
+    <button class="copyright-warning-btn">
+        ⚠️ საავტორო უფლებები: პროექტი შექმნილია სასწავლო მიზნებისთვის და შეიცავს ყალბ ინფორმაციას
+    </button>
+</div>

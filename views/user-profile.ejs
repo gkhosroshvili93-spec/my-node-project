@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= targetUser.firstName %> <%= targetUser.lastName %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; color: #050505; overflow-x: hidden; }
+        
+        .navbar { background: white; height: 56px; padding: 0 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; }
+        .nav-logo { font-size: 28px; font-weight: bold; color: #1877f2; text-decoration: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+        .nav-search input { background: #f0f2f5; border: none; padding: 10px 16px; border-radius: 20px; width: 240px; font-size: 15px; outline: none; }
+        .nav-icons { display: flex; gap: 8px; }
+        .nav-icon { width: 40px; height: 40px; background: #e4e6eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; color: black; font-size: 20px; transition: 0.2s; position: relative; }
+        .nav-icon:hover { background: #d8dadf; }
+        
+        /* Profile Header */
+        .profile-container { background: white; box-shadow: 0 1px 2px rgba(0,0,0,0.1); width: 100%; max-width: 1100px; margin: 0 auto; padding-bottom: 0; }
+        .cover-container { height: 400px; position: relative; border-radius: 0 0 8px 8px; overflow: hidden; background: linear-gradient(to bottom, #ddd, #eee); }
+        .cover-photo { width: 100%; height: 100%; object-fit: cover; }
+        
+        .profile-top-section { padding: 0 32px; padding-bottom: 16px; max-width: 1050px; margin: 0 auto; position: relative; }
+        .profile-header-content { display: flex; align-items: flex-end; margin-top: -30px; border-bottom: 1px solid #ddd; padding-bottom: 20px; }
+        
+        .avatar-container { position: relative; margin-top: -130px; padding: 4px; background: white; border-radius: 50%; width: 176px; height: 176px; }
+        .profile-avatar { width: 168px; height: 168px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(0,0,0,0.1); }
+        
+        .profile-info { margin-left: 20px; margin-bottom: 10px; flex: 1; }
+        .profile-name { font-size: 32px; font-weight: bold; margin: 0; }
+        .profile-friends-count { font-size: 17px; color: #65676b; font-weight: 500; margin-top: 5px; }
+        
+        .profile-actions { display: flex; gap: 8px; align-items: center; margin-bottom: 15px; }
+        .btn { border: none; padding: 0 12px; height: 36px; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none; font-size: 15px; white-space: nowrap; transition: 0.2s; }
+        .btn-blue { background: #1877f2; color: white; }
+        .btn-blue:hover { background: #166fe5; }
+        .btn-gray { background: #e4e6eb; color: #050505; }
+        .btn-gray:hover { background: #d8dadf; }
+
+        /* Tabs */
+        .profile-tabs { display: flex; gap: 5px; margin-top: 5px; padding: 0 32px; max-width: 1050px; margin: 0 auto; }
+        .tab-item { padding: 15px 16px; font-weight: 600; color: #65676b; cursor: pointer; border-bottom: 3px solid transparent; border-radius: 6px 6px 0 0; transition: 0.1s; }
+        .tab-item:hover { background: #f0f2f5; }
+        .tab-item.active { color: #1877f2; border-bottom-color: #1877f2; border-radius: 0; }
+
+        /* Body Grid */
+        .content-grid { display: grid; grid-template-columns: 360px 1fr; gap: 16px; max-width: 1050px; margin: 20px auto; padding: 0 16px; }
+        
+        /* Tab Contents */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .card { background: white; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); padding: 16px; margin-bottom: 16px; }
+        .card-header { font-size: 20px; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: space-between; }
+        
+        /* Intro */
+        .intro-item { display: flex; align-items: center; gap: 10px; font-size: 15px; color: #050505; margin-bottom: 15px; }
+        .intro-icon { width: 20px; text-align: center; color: #8c939d; font-size: 18px; }
+        
+        /* Photos Grid Preview */
+        .photos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; border-radius: 8px; overflow: hidden; margin-top: 10px; }
+        .photos-grid-lg { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+        .photo-thumb { width: 100%; aspect-ratio: 1; object-fit: cover; cursor: pointer; }
+        .photo-thumb-lg { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; cursor: pointer; }
+
+        /* Posts */
+        .post-card { background: white; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); margin-bottom: 15px; padding: 12px 16px; }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .post-avatar { width: 40px; height: 40px; border-radius: 50%; }
+        .post-author { font-weight: 600; color: #050505; text-decoration: none; }
+        .post-time { font-size: 13px; color: #65676b; }
+        .post-content { font-size: 15px; margin-bottom: 10px; line-height: 1.4; }
+        .post-image { width: 100%; border-radius: 8px; margin-top: 5px; border: 1px solid #ddd; }
+        
+        @media (max-width: 900px) {
+            .content-grid { grid-template-columns: 1fr; }
+            .profile-header-content { flex-direction: column; align-items: center; text-align: center; }
+            .profile-info { margin: 10px 0; }
+            .profile-actions { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="/dashboard" class="nav-logo">f</a>
+        
+        <form action="/search" method="GET" class="nav-search">
+            <input type="text" name="q" placeholder="Search Portal...">
+        </form>
+
+        <div class="nav-icons">
+            <a href="/dashboard" class="nav-icon" title="Home">🏠</a>
+            <a href="/friends" class="nav-icon" title="Friends">👥</a>
+            <a href="/chat" class="nav-icon" title="Messenger">💬</a>
+            <a href="/settings" class="nav-icon" style="overflow:hidden;">
+                <img src="<%= currentUser.avatar || '/uploads/default.png' %>" style="width:100%; height:100%; object-fit:cover;">
+            </a>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <div style="background: white; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+        <div class="profile-container">
+            <div class="cover-container">
+                <% if (targetUser.coverPhoto) { %>
+                    <img src="<%= targetUser.coverPhoto %>" class="cover-photo">
+                <% } else { %>
+                    <div style="width:100%; height:100%; background: linear-gradient(to bottom, #ccc, #eee);"></div>
+                <% } %>
+            </div>
+            
+            <div class="profile-top-section">
+                <div class="profile-header-content">
+                    <div class="avatar-container">
+                        <img src="<%= targetUser.avatar || '/uploads/default.png' %>" class="profile-avatar">
+                    </div>
+                    <div class="profile-info">
+                        <h1 class="profile-name"><%= targetUser.firstName %> <%= targetUser.lastName %></h1>
+                        <div class="profile-friends-count">
+                            <!-- Helper logic for friend count would vary, for now static or minimal query -->
+                             <%= friendRequestsCount %> Friend<% if(friendRequestsCount !== 1){ %>s<%}%> (This is usually total friends, using requests var just for display)
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <% if (currentUser.email === targetUser.email) { %>
+                            <button class="btn btn-blue" onclick="location.href='/stories/create'">+ Add to Story</button>
+                            <button class="btn btn-gray" onclick="location.href='/settings'">Edit Profile</button>
+                        <% } else { %>
+                            <% if (isFriend) { %>
+                                <button class="btn btn-gray">Friends ✓</button>
+                                <button class="btn btn-blue" onclick="initiateChat('<%= targetUser.email %>', '<%= targetUser.firstName %> <%= targetUser.lastName %>', '<%= targetUser.avatar %>')">
+                                    💬 Message
+                                </button>
+                            <% } else if (isRequestSent) { %>
+                                <button class="btn btn-gray">Request Sent</button>
+                            <% } else if (isRequestReceived) { %>
+                                <form action="/friends/accept" method="POST" style="margin:0;"><input type="hidden" name="targetEmail" value="<%= targetUser.email %>"><button class="btn btn-blue">Confirm</button></form>
+                            <% } else { %>
+                                <form action="/friends/add" method="POST" style="margin:0;"><input type="hidden" name="targetEmail" value="<%= targetUser.email %>"><button class="btn btn-blue">Add Friend</button></form>
+                                <button class="btn btn-gray" onclick="initiateChat('<%= targetUser.email %>', '<%= targetUser.firstName %> <%= targetUser.lastName %>', '<%= targetUser.avatar %>')">
+                                    💬 Message
+                                </button>
+                            <% } %>
+                        <% } %>
+                    </div>
+                </div>
+                
+                <hr style="border: 0; border-top: 1px solid #ced0d4; margin: 0;">
+                
+                <div class="profile-tabs">
+                    <div class="tab-item active" onclick="switchTab('posts', this)">Posts</div>
+                    <div class="tab-item" onclick="switchTab('about', this)">About</div>
+                    <div class="tab-item" onclick="switchTab('photos', this)">Photos</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="content-grid">
+        
+        <!-- POSTS TAB -->
+        <div id="tab-posts" class="tab-content active">
+             <div style="display: grid; grid-template-columns: 360px 1fr; gap: 16px;">
+                <!-- Left Column: Intro -->
+                <div>
+                    <div class="card">
+                        <div class="card-header">Intro</div>
+                        <% if (targetUser.bio) { %>
+                            <div style="text-align: center; margin-bottom: 15px;"><%= targetUser.bio %></div>
+                        <% } %>
+                        
+                        <div class="intro-item"><span class="intro-icon">🏠</span> Lives in <strong>Tbilisi, Georgia</strong></div>
+                        <div class="intro-item"><span class="intro-icon">📧</span> <%= targetUser.email %></div>
+                        
+                        <% if (targetUser.email === currentUser.email) { %>
+                            <button class="btn btn-gray" style="width:100%; justify-content:center; margin-top:10px;" onclick="location.href='/settings'">Edit Details</button>
+                        <% } %>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            Photos
+                            <span onclick="switchTab('photos', document.querySelectorAll('.tab-item')[2])" style="font-size:15px; color:#1877f2; text-decoration:none; font-weight:normal; cursor:pointer;">See All Photos</span>
+                        </div>
+                        <div class="photos-grid">
+                            <% 
+                                let photoCount = 0;
+                                for(let p of userPosts) {
+                                    if(p.image && photoCount < 9) {
+                            %>
+                                <img src="<%= p.image %>" class="photo-thumb" onclick="openPhoto('<%= p.image %>')">
+                            <% 
+                                        photoCount++;
+                                    }
+                                }
+                            %>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column: Posts -->
+                <div>
+                    <!-- Create Post (only for owner) -->
+                    <% if (targetUser.email === currentUser.email) { %>
+                        <div class="card" style="padding: 12px 16px;">
+                            <form action="/posts/create" method="POST" enctype="multipart/form-data" style="display:flex; gap:10px; align-items:center;">
+                                <img src="<%= currentUser.avatar || '/uploads/default.png' %>" class="post-avatar">
+                                <input type="text" name="content" placeholder="What's on your mind?" style="flex:1; background:#f0f2f5; border:none; padding:10px 15px; border-radius:20px; outline:none;">
+                            </form>
+                            <hr style="border:0; border-top:1px solid #e4e6eb; margin:10px 0;">
+                            <div style="display:flex; justify-content: space-around;">
+                                <div style="display:flex; align-items:center; gap:5px; color:#65676b; font-weight:600; cursor:pointer;" onclick="document.querySelector('input[name=content]').focus()">
+                                    <span style="font-size:20px;">🎥</span> Live Video
+                                </div>
+                                <div style="display:flex; align-items:center; gap:5px; color:#65676b; font-weight:600; cursor:pointer;" onclick="document.querySelector('input[name=content]').focus()">
+                                    <span style="font-size:20px; color:#45bd62;">📷</span> Photo/Video
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <!-- Posts List -->
+                    <% if (userPosts.length === 0) { %>
+                        <div class="card" style="text-align:center; color:#65676b; padding:30px;">
+                            No posts to show
+                        </div>
+                    <% } %>
+
+                    <% userPosts.forEach(post => { %>
+                        <div class="post-card">
+                            <div class="post-header">
+                                <img src="<%= targetUser.avatar || '/uploads/default.png' %>" class="post-avatar">
+                                <div style="flex:1;">
+                                    <a href="#" class="post-author"><%= targetUser.firstName %> <%= targetUser.lastName %></a>
+                                    <div class="post-time">
+                                        <%= new Date(post.timestamp).toLocaleString() %> • 
+                                        <span title="<%= post.privacy === 'friends' ? 'Friends' : 'Public' %>">
+                                            <%= post.privacy === 'friends' ? '👥' : '🌎' %>
+                                        </span>
+                                    </div>
+                                </div>
+                                <form action="/report/<%= post.id %>" method="POST">
+                                    <input type="hidden" name="type" value="post">
+                                    <button style="background:none; border:none; cursor:pointer; font-size:16px;">🚩</button>
+                                </form>
+                            </div>
+                            <div class="post-content"><%= post.content %></div>
+                            <% if (post.image) { %>
+                                <img src="<%= post.image %>" class="post-image">
+                            <% } %>
+                            
+                            <div style="border-top:1px solid #e4e6eb; margin-top:10px; padding-top:5px; display:flex; justify-content:space-around;">
+                                <form action="/post/like/<%= post.id %>" method="POST" style="flex:1;">
+                                    <button style="width:100%; background:none; border:none; padding:8px; font-weight:600; color:#65676b; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:5px;">
+                                        👍 Like (<%= post.likes ? post.likes.length : 0 %>)
+                                    </button>
+                                </form>
+                                <button style="flex:1; background:none; border:none; padding:8px; font-weight:600; color:#65676b; cursor:pointer;">💬 Comment</button>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+             </div>
+        </div>
+
+        <!-- ABOUT TAB -->
+        <div id="tab-about" class="tab-content">
+            <div class="card">
+                <div class="card-header">About</div>
+                <div style="padding: 10px;">
+                    <p><strong>Bio:</strong> <%= targetUser.bio || "No bio set." %></p>
+                    <p><strong>Email:</strong> <%= targetUser.email %></p>
+                    <p><strong>First Name:</strong> <%= targetUser.firstName %></p>
+                    <p><strong>Last Name:</strong> <%= targetUser.lastName %></p>
+                    <p><strong>Username:</strong> <%= targetUser.username %></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PHOTOS TAB -->
+        <div id="tab-photos" class="tab-content">
+             <div class="card">
+                <div class="card-header">Photos</div>
+                <div class="photos-grid-lg">
+                    <% 
+                        let hasPhotos = false;
+                        for(let p of userPosts) {
+                            if(p.image) {
+                                hasPhotos = true;
+                    %>
+                        <img src="<%= p.image %>" class="photo-thumb-lg" onclick="openPhoto('<%= p.image %>')">
+                    <% 
+                            }
+                        }
+                    %>
+                </div>
+                <% if(!hasPhotos) { %>
+                    <div style="padding:20px; text-align:center; color:#777;">No photos shared yet.</div>
+                <% } %>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Chat Popup -->
+    <%- include('partials/chat-popup') %>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const userEmail = "<%= currentUser.email %>"; // Global for popup
+
+        socket.emit('user_connected', userEmail);
+
+        function switchTab(tabName, element) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+                if (el.id === 'tab-posts') {
+                    // Posts tab has specific grid display reset
+                    if(tabName === 'posts') el.style.display = 'block'; 
+                    else el.style.display = 'none';
+                } else {
+                     el.dataset.active = (el.id === 'tab-' + tabName);
+                }
+            });
+
+            // Show selected
+            const selected = document.getElementById('tab-' + tabName);
+            if (selected) {
+                selected.classList.add('active');
+                selected.style.display = 'block';
+            }
+
+            // Update tab headers
+            document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            
+            // Fix layout for non-posts tabs which don't need the 2-col grid
+            const grid = document.querySelector('.content-grid');
+            if (tabName !== 'posts') {
+                grid.style.display = 'block';
+            } else {
+                grid.style.display = 'grid';
+            }
+        }
+        
+        function openPhoto(src) {
+            window.open(src, '_blank');
+        }
+    </script>
+</body>
+</html>

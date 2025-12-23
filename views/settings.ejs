@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>პარამეტრები - ჩემი კაბინეტი</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans Georgian', sans-serif; background-color: #f4f6f9; }
+        .settings-container { max-width: 900px; margin: 30px auto; display: grid; grid-template-columns: 250px 1fr; gap: 30px; }
+        
+        /* Sidebar Navigation */
+        .settings-sidebar { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: fit-content; }
+        .sidebar-item { display: block; padding: 12px 15px; color: #555; text-decoration: none; border-radius: 8px; margin-bottom: 5px; transition: all 0.2s; }
+        .sidebar-item:hover, .sidebar-item.active { background-color: #eef2ff; color: #667eea; font-weight: bold; }
+        
+        /* Main Content Area */
+        .settings-content { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .section-title { font-size: 1.5em; color: #333; margin-bottom: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+        
+        .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .action-card { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; text-decoration: none; color: #495057; transition: transform 0.2s, box-shadow 0.2s; display: flex; align-items: center; gap: 15px; }
+        .action-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-color: #dee2e6; }
+        .icon-box { width: 40px; height: 40px; background: #eef2ff; color: #667eea; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; }
+
+        .back-link { display: inline-block; margin-top: 20px; color: #667eea; text-decoration: none; }
+        
+        @media (max-width: 768px) {
+            .settings-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="settings-container">
+        <!-- Sidebar -->
+        <div class="settings-sidebar">
+            <h3 style="margin-top: 0; color: #333; padding-left: 10px;">⚙️ პარამეტრები</h3>
+            <a href="#personal" class="sidebar-item active">👤 პირადი მონაცემები</a>
+            <a href="#security" class="sidebar-item">🛡️ უსაფრთხოება</a>
+            <a href="/logout" class="sidebar-item" style="color: #dc3545; margin-top: 20px;">🚪 გასვლა</a>
+        </div>
+
+        <!-- Content -->
+        <div class="settings-content">
+            <div id="personal">
+                <h2 class="section-title">პირადი მონაცემები</h2>
+                <div class="card-grid">
+                    <a href="/profile" class="action-card">
+                        <div class="icon-box">✏️</div>
+                        <div>
+                            <div style="font-weight: bold;">მონაცემების რედაქტირება</div>
+                            <small>სახელი, გვარი, ავატარის შეცვლა</small>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div id="security" style="margin-top: 40px;">
+                <h2 class="section-title">უსაფრთხოება</h2>
+                <div class="card-grid">
+                    <a href="/change-password" class="action-card">
+                        <div class="icon-box">🔒</div>
+                        <div>
+                            <div style="font-weight: bold;">პაროლის შეცვლა</div>
+                            <small>შეცვალეთ თქვენი მიმდინარე პაროლი</small>
+                        </div>
+                    </a>
+                    
+                    <% if (!user.is2faSetup) { %>
+                        <a href="/setup-2fa" class="action-card" style="border-left: 4px solid #ffc107;">
+                            <div class="icon-box" style="color: #856404; background: #fff3cd;">📱</div>
+                            <div>
+                                <div style="font-weight: bold;">2FA-ს გააქტიურება</div>
+                                <small>დამატებითი დაცვის ფენა</small>
+                            </div>
+                        </a>
+                    <% } else { %>
+                        <div class="action-card" style="border-left: 4px solid #28a745; cursor: default;">
+                            <div class="icon-box" style="color: #155724; background: #d4edda;">✓</div>
+                            <div>
+                                <div style="font-weight: bold;">2FA გააქტიურებულია</div>
+                                <small>თქვენი ანგარიში დაცულია</small>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <a href="/dashboard" class="back-link">← მთავარ გვერდზე დაბრუნება</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

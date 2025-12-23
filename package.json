@@ -1,0 +1,25 @@
+{
+  "name": "node-auth-system",
+  "version": "1.0.0",
+  "description": "Node.js authentication system with 2FA",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^1.20.2",
+    "dotenv": "^17.2.3",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-rate-limit": "^8.2.1",
+    "express-session": "^1.17.3",
+    "mongoose": "^9.0.2",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.11",
+    "otplib": "^12.0.1",
+    "qrcode": "^1.5.3",
+    "socket.io": "^4.8.1",
+    "svg-captcha": "^1.4.0"
+  }
+}

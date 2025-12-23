@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ადმინ პანელი</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .btn-delete { background-color: #dc3545; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width: 800px;">
+        <h2>ადმინ პანელი - მომხმარებლები</h2>
+        
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% usersList.forEach(u => { %>
+                        <tr>
+                            <td><%= u.email %></td>
+                            <td><%= u.firstName %> <%= u.lastName %> (<%= u.username %>)</td>
+                            <td><%= u.role %></td>
+                            <td>
+                                <% if (u.email !== currentUserEmail) { %>
+                                    <a href="/admin/change-password/<%= u.email %>" class="btn-change-pass" style="background-color: #ffc107; color: black; padding: 5px 10px; text-decoration: none; border-radius: 3px; font-size: 0.9em; margin-right: 5px;">პაროლის შეცვლა</a>
+                                    <a href="/admin/delete/<%= u.email %>" class="btn-delete" onclick="return confirm('დარწმუნებული ხართ?');">წაშლა</a>
+                                <% } else { %>
+                                    <span style="color: grey; font-size: 0.9em;">(თქვენ)</span>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+        <a href="/dashboard" class="link" style="margin-top: 20px; display: inline-block;">უკან დაშბორდზე</a>
+    </div>
+</body>
+</html>

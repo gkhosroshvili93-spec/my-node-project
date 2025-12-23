@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends - SocialPortal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; color: #050505; }
+        
+        .navbar { background: white; height: 60px; padding: 0 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+        .nav-logo { font-size: 24px; font-weight: bold; color: #1877f2; text-decoration: none; }
+        .nav-icons { display: flex; gap: 10px; }
+        .nav-icon { width: 40px; height: 40px; background: #e4e6eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; color: black; transition: 0.2s; font-size: 20px; }
+        .nav-icon:hover { background: #d8dadf; }
+
+        .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
+        
+        .section-title { font-size: 20px; font-weight: 700; margin-bottom: 15px; margin-top: 30px; }
+        
+        .friends-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        
+        .user-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.1); padding: 15px; text-align: center; }
+        .user-card img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; }
+        .user-name { font-weight: 600; font-size: 16px; margin-bottom: 5px; }
+        .user-username { color: #65676b; font-size: 14px; margin-bottom: 15px; }
+        
+        .btn { border: none; padding: 8px 0; width: 100%; border-radius: 6px; font-weight: 600; cursor: pointer; margin-top: 5px; transition: 0.2s; }
+        .btn-primary { background: #e7f3ff; color: #1877f2; }
+        .btn-primary:hover { background: #dbe7f2; }
+        .btn-confirm { background: #1877f2; color: white; }
+        .btn-confirm:hover { background: #166fe5; }
+        .btn-danger { background: #e4e6eb; color: black; }
+        .btn-danger:hover { background: #d8dadf; }
+        
+        .empty-state { text-align: center; color: #65676b; padding: 20px; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="/dashboard" class="nav-logo" style="display: flex; align-items: center; gap: 2px;">
+            <span style="color: #ff4757; font-weight: 800;">Bta</span>SocialPortal
+        </a>
+        <div class="nav-icons">
+             <a href="/dashboard" class="nav-icon">🏠</a>
+             <a href="/friends" class="nav-icon" style="background: #e7f3ff; color: #1877f2; position:relative;">
+                 👥
+                 <% if (typeof friendRequestsCount !== 'undefined' && friendRequestsCount > 0) { %>
+                    <span style="position: absolute; top: -5px; right: -5px; background: #e41e3f; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: flex; align-items: center; justify-content: center; border: 2px solid white;">+<%= friendRequestsCount %></span>
+                 <% } %>
+             </a>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- Friend Requests -->
+        <% if (received.length > 0) { %>
+            <div class="section-title">მეგობრობის თხოვნები (<%= received.length %>)</div>
+            <div class="friends-grid">
+                <% received.forEach(u => { %>
+                    <div class="user-card">
+                        <img src="<%= u.avatar || '/uploads/default.png' %>">
+                        <div class="user-name">
+                            <a href="/user/<%= u.email %>" style="text-decoration:none; color:inherit;"><%= u.firstName %> <%= u.lastName %></a>
+                        </div>
+                        <div class="user-username">@<%= u.username %></div>
+                        <form action="/friends/accept" method="POST">
+                            <input type="hidden" name="targetEmail" value="<%= u.email %>">
+                            <button class="btn btn-confirm">დადასტურება</button>
+                        </form>
+                        <form action="/friends/reject" method="POST">
+                            <input type="hidden" name="targetEmail" value="<%= u.email %>">
+                            <button class="btn btn-danger">წაშლა</button>
+                        </form>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+
+        <!-- My Friends -->
+        <div class="section-title">ჩემი მეგობრები (<%= friends.length %>)</div>
+        <% if (friends.length === 0) { %>
+            <div class="empty-state">მეგობრები ჯერ არ გყავს.</div>
+        <% } else { %>
+            <div class="friends-grid">
+                <% friends.forEach(u => { %>
+                    <div class="user-card">
+                        <img src="<%= u.avatar || '/uploads/default.png' %>">
+                        <div class="user-name">
+                            <a href="/user/<%= u.email %>" style="text-decoration:none; color:inherit;"><%= u.firstName %> <%= u.lastName %></a>
+                        </div>
+                        <a href="/chat?with=<%= u.email %>" class="btn btn-primary" style="display:block; text-decoration:none; line-height:30px;">მიწერა</a>
+                        <form action="/friends/remove" method="POST" onsubmit="return confirm('დარწმუნებული ხართ რომ გსურთ მეგობრის წაშლა?');">
+                            <input type="hidden" name="targetEmail" value="<%= u.email %>">
+                            <button class="btn btn-danger">მეგობრობის გაუქმება</button>
+                        </form>
+                        <form action="/user/block" method="POST" onsubmit="return confirm('დარწმუნებული ხართ რომ გსურთ მეგობრის დაბლოკვა?');" style="margin-top:5px;">
+                            <input type="hidden" name="targetEmail" value="<%= u.email %>">
+                            <button class="btn" style="background:black; color:white;">დაბლოკვა</button>
+                        </form>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+
+        <!-- Suggestions -->
+        <% if (suggestions.length > 0) { %>
+            <div class="section-title">შემოთავაზებები</div>
+            <div class="friends-grid">
+                <% suggestions.forEach(u => { %>
+                    <div class="user-card">
+                        <img src="<%= u.avatar || '/uploads/default.png' %>">
+                        <div class="user-name">
+                             <a href="/user/<%= u.email %>" style="text-decoration:none; color:inherit;"><%= u.firstName %> <%= u.lastName %></a>
+                        </div>
+                        <form action="/friends/add" method="POST">
+                            <input type="hidden" name="targetEmail" value="<%= u.email %>">
+                            <button class="btn btn-primary">დამატება</button>
+                        </form>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+        
+    </div>
+
+</body>
+</html>

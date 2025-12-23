@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>რეგისტრაცია - BtaSocialPortal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; background: #f0f2f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        
+        .auth-container { position: relative; z-index: 10; width: 100%; max-width: 500px; }
+        
+        .brand-header { text-align: center; margin-bottom: 20px; }
+        .brand-logo { font-size: 40px; font-weight: bold; color: #1877f2; text-shadow: 0 2px 5px rgba(255,255,255,0.8); }
+        
+        .auth-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 30px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.5); }
+        
+        .card-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; text-align: center; color: #1c1e21; }
+        .card-subtitle { font-size: 15px; color: #606770; text-align: center; margin-bottom: 20px; }
+        
+        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; flex: 1; }
+        
+        label { font-size: 13px; color: #606770; margin-bottom: 5px; display: block; font-weight: 600; }
+        
+        input[type="text"], input[type="email"], input[type="password"], select { width: 100%; padding: 10px 12px; border: 1px solid #ccd0d5; border-radius: 6px; font-size: 15px; outline: none; background: #f5f6f7; }
+        input:focus, select:focus { border-color: #1877f2; background: white; box-shadow: 0 0 0 2px rgba(24,119,242,0.2); }
+        
+        .btn-register { width: 100%; background: #42b72a; color: white; border: none; padding: 12px; font-size: 18px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .btn-register:hover { background: #36a420; }
+        
+        .login-link { text-align: center; margin-top: 20px; font-size: 14px; color: #1877f2; }
+        .login-link a { color: #1877f2; font-weight: bold; text-decoration: none; }
+        .login-link a:hover { text-decoration: underline; }
+        
+        .error-msg { background: #ffebe8; border: 1px solid #dd3c10; color: #dd3c10; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px; text-align: center; }
+        
+        /* Strength Meter */
+        .password-strength-container { height: 4px; background: #ddd; margin-top: 8px; border-radius: 2px; overflow: hidden; }
+        .password-strength-bar { height: 100%; width: 0%; transition: 0.3s; }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="particleCanvas"></canvas>
+
+    <div class="auth-container">
+        <div class="brand-header">
+            <div class="brand-logo"><span style="color: #ff4757;">Bta</span>SocialPortal</div>
+        </div>
+        
+        <div class="auth-card">
+            <div class="card-title">შექმენით ანგარიში</div>
+            <div class="card-subtitle">ეს სწრაფი და მარტივია.</div>
+            
+            <% if (error) { %>
+                <div class="error-msg">⚠️ <%= error %></div>
+            <% } %>
+
+            <form action="/register" method="POST" autocomplete="off">
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" name="firstName" placeholder="სახელი" required value="<%= formData.firstName || '' %>">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="lastName" placeholder="გვარი" required value="<%= formData.lastName || '' %>">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" name="username" placeholder="მომხმარებლის სახელი" required value="<%= formData.username || '' %>">
+                </div>
+                
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="ელ.ფოსტა ან მობილური" required value="<%= formData.email || '' %>">
+                </div>
+
+                <div class="form-group">
+                    <input type="password" id="password" name="password" placeholder="ახალი პაროლი" required>
+                     <div class="password-strength-container">
+                        <div class="password-strength-bar" id="strengthBar"></div>
+                    </div>
+                    <small id="strengthText" style="display:block; text-align:right; font-size:11px; margin-top:3px; color:#606770;">სიძლიერე</small>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" name="confirmPassword" placeholder="გაიმეორეთ პაროლი" required>
+                </div>
+                
+                <div class="form-group">
+                     <select name="securityQuestion" required onchange="document.getElementById('securityAnswer').style.display='block'">
+                         <option value="" disabled <%= !formData.securityQuestion ? 'selected' : '' %>>უსაფრთხოების კითხვა (აღდგენისთვის)</option>
+                         <option value="pet_name" <%= formData.securityQuestion === 'pet_name' ? 'selected' : '' %>>პირველი შინაური ცხოველი?</option>
+                         <option value="birth_city" <%= formData.securityQuestion === 'birth_city' ? 'selected' : '' %>>დაბადების ქალაქი?</option>
+                         <option value="favorite_teacher" <%= formData.securityQuestion === 'favorite_teacher' ? 'selected' : '' %>>საყვარელი მასწავლებელი?</option>
+                     </select>
+                     <input type="text" name="securityAnswer" id="securityAnswer" placeholder="თქვენი პასუხი..." style="display:<%= formData.securityAnswer ? 'block' : 'none' %>; margin-top:10px;" value="<%= formData.securityAnswer || '' %>">
+                </div>
+
+                <button type="submit" class="btn-register">რეგისტრაცია</button>
+            </form>
+            
+            <div class="login-link">
+                უკვე გაქვთ ანგარიში? <a href="/login">შესვლა</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Canvas Effect (Reused)
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let particles = [];
+        
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = (Math.random() - 0.5) * 1;
+                this.size = Math.random() * 3 + 1;
+                this.color = `rgba(24, 119, 242, ${Math.random() * 0.5})`;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if(this.x < 0 || this.x > width) this.vx *= -1;
+                if(this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        function initParticles() {
+            particles = [];
+            for(let i=0; i<80; i++) particles.push(new Particle());
+        }
+        
+        function animate() {
+            ctx.clearRect(0,0,width,height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+                particles.forEach(p2 => {
+                    let dx = p.x - p2.x;
+                    let dy = p.y - p2.y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    if(dist < 100) {
+                        ctx.strokeStyle = `rgba(24, 119, 242, ${0.1 - dist/1000})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                });
+            });
+            requestAnimationFrame(animate);
+        }
+        
+        window.addEventListener('resize', resize);
+        resize();
+        initParticles();
+        animate();
+        
+        // Password Strength
+        const passInput = document.getElementById('password');
+        const bar = document.getElementById('strengthBar');
+        const text = document.getElementById('strengthText');
+        
+        passInput.addEventListener('input', () => {
+             const val = passInput.value;
+             let strength = 0;
+             if(val.length > 5) strength++;
+             if(val.length > 8) strength++;
+             if(/[A-Z]/.test(val)) strength++;
+             if(/[0-9]/.test(val)) strength++;
+             
+             let color = '#ddd';
+             let width = '0%';
+             let label = 'სუსტი';
+             
+             if(strength >= 4) { color = '#42b72a'; width = '100%'; label = 'ძლიერი'; }
+             else if(strength >= 2) { color = '#f7b928'; width = '60%'; label = 'საშუალო'; }
+             else if(strength >= 1) { color = '#e41e3f'; width = '30%'; label = 'სუსტი'; }
+             
+             bar.style.width = width;
+             bar.style.background = color;
+             text.innerText = label;
+             text.style.color = color;
+        });
+    </script>
+    <%- include('partials/warning') %>
+</body>
+</html>

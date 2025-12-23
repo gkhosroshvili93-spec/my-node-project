@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>პროფილის რედაქტირება</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>პროფილის რედაქტირება</h2>
+
+        <% if (error) { %>
+            <div class="error-message"><%= error %></div>
+        <% } %>
+
+        <form action="/profile" method="POST" enctype="multipart/form-data">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="<%= user.avatar %>" alt="Avatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;">
+            </div>
+
+            <div class="form-group">
+                <label for="avatar">პროფილის სურათი (Avatar)</label>
+                <input type="file" id="avatar" name="avatar" accept="image/*">
+            </div>
+
+            <div class="form-group">
+                <label for="coverPhoto">გარეკანის ფოტო (Cover Photo)</label>
+                <input type="file" id="coverPhoto" name="coverPhoto" accept="image/*">
+            </div>
+
+            <div class="form-group">
+                <label for="bio">Bio (მოკლე აღწერა)</label>
+                <textarea id="bio" name="bio" rows="3" style="width: 100%; border-radius: 8px; border: 1px solid #ccc; padding: 10px;"><%= user.bio || '' %></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="firstName">სახელი</label>
+                <input type="text" id="firstName" name="firstName" value="<%= user.firstName %>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">გვარი</label>
+                <input type="text" id="lastName" name="lastName" value="<%= user.lastName %>" required>
+            </div>
+
+            <button type="submit">შენახვა</button>
+        </form>
+         <a href="/dashboard" class="link">უკან დაშბორდზე</a>
+    </div>
+</body>
+</html>
