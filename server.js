@@ -893,6 +893,9 @@ app.post("/news/add", async (req, res) => {
   res.redirect("/news");
 });
 
-server.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Server bound to 0.0.0.0`);
 });
