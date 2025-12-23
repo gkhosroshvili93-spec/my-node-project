@@ -96,11 +96,12 @@ app.use(express.static("public"));
 app.set("view engine", "ejs");
 
 const cm = require('connect-mongo');
-console.log("DEBUG: connect-mongo require:", cm);
-console.log("DEBUG: connect-mongo keys:", Object.keys(cm));
 const MongoStore = cm.default || cm;
-console.log("DEBUG: MongoStore resolved:", MongoStore);
-console.log("DEBUG: MongoStore.create type:", typeof MongoStore.create);
+// Ensure we have a valid store creation method, fallback if weirdness occurs
+if (!MongoStore.create && cm.create) {
+    MongoStore.create = cm.create;
+}
+
 
 // Session
 app.use(
@@ -372,8 +373,14 @@ app.get("/dashboard", async (req, res) => {
     // Grouping logic: Key is author email or ID. EJS iterates keys.
     // We'll group by userId (email)
     for (const s of allStories) {
-      if (!groupedStories[s.userId]) groupedStories[s.userId] = [];
-      groupedStories[s.userId].push(s);
+      if (!groupedStories[s.userId]) {
+        groupedStories[s.userId] = {
+          stories: [],
+          authorName: s.authorName,
+          authorAvatar: s.authorAvatar
+        };
+      }
+      groupedStories[s.userId].stories.push(s);
     }
 
     // News Feed Logic
