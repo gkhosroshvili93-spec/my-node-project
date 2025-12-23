@@ -3,3 +3,10 @@ node_modules
 .DS_Store
 *.log
 შეღწევადობის ტესტირება/
+ADMIN_COMMANDS.md
+BCRYPT_GUIDE_GE.md
+ENCRYPTION_GUIDE_GE.md
+GITHUB_INSTRUCTIONS.md
+GUIDE_GE.md
+LOGIN_LOGS_DOCS.md
+SECURITY_DOCS.md
