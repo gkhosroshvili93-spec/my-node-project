@@ -95,7 +95,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
-const MongoStore = require('connect-mongo');
+const cm = require('connect-mongo');
+console.log("DEBUG: connect-mongo require:", cm);
+console.log("DEBUG: connect-mongo keys:", Object.keys(cm));
+const MongoStore = cm.default || cm;
+console.log("DEBUG: MongoStore resolved:", MongoStore);
+console.log("DEBUG: MongoStore.create type:", typeof MongoStore.create);
 
 // Session
 app.use(
