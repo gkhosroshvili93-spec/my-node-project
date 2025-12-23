@@ -95,7 +95,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
-const MongoStore = require('connect-mongo');
+const MongoStore = require('connect-mongo').MongoStore;
 
 // Session
 app.use(
