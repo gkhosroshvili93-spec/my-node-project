@@ -10,3 +10,6 @@ GITHUB_INSTRUCTIONS.md
 GUIDE_GE.md
 LOGIN_LOGS_DOCS.md
 SECURITY_DOCS.md
+*.json
+!package.json
+!package-lock.json
