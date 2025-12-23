@@ -762,7 +762,9 @@
         function deleteCurrentStory() {
             const story = currentStories[currentStoryIndex];
             if (story) {
-                confirmDelete('story', story.id);
+                // MongoDB uses _id, but just in case, check both
+                const id = story._id || story.id;
+                confirmDelete('story', id);
             }
         }
 
