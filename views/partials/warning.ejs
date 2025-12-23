@@ -27,7 +27,8 @@
 }
 </style>
 
-<div class="copyright-warning-container">
+<div class="copyright-warning-container" id="copyrightWarning">
+    <div onclick="document.getElementById('copyrightWarning').remove()" style="position: absolute; top: -12px; right: -10px; background: white; color: #333; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: 2px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-family: sans-serif; z-index: 10000;">✕</div>
     <button class="copyright-warning-btn">
         ⚠️ საავტორო უფლებები: პროექტი შექმნილია სასწავლო მიზნებისთვის და შეიცავს ყალბ ინფორმაციას
     </button>
