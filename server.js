@@ -412,6 +412,7 @@ app.get("/dashboard", async (req, res) => {
       userFriends,
       friendsData,
       stories: groupedStories,
+      contacts: allUsersList
     });
   } catch (e) {
     console.error(e);
