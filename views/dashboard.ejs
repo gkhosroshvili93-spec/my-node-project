@@ -211,10 +211,12 @@
                 
                 <!-- Hidden Forms -->
                 <form action="/story/create" method="POST" enctype="multipart/form-data" id="photoStoryForm">
+                    <input type="hidden" name="type" value="photo">
                     <input type="file" name="image" id="storyInput" accept="image/*" style="display: none;" onchange="document.getElementById('photoStoryForm').submit()">
                 </form>
 
                 <form action="/story/create" method="POST" enctype="multipart/form-data" id="textStoryForm" style="display:none;">
+                    <input type="hidden" name="type" value="text">
                     <textarea name="text" id="hiddenStoryText"></textarea>
                     <input type="text" name="background" id="hiddenStoryBg">
                 </form>
