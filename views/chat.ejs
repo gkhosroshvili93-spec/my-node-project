@@ -630,8 +630,29 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        const socket = io();
+        // DEBUG: Version Check
+        const debugBadge = document.createElement('div');
+        debugBadge.innerText = "v2.0 (Socket Fix)";
+        debugBadge.style.cssText = "position:fixed; bottom:5px; left:5px; background:black; color:lime; padding:2px 5px; font-size:10px; z-index:9999;";
+        document.body.appendChild(debugBadge);
 
+        const socket = io({
+            transports: ['websocket', 'polling'], // Forge transports
+            reconnection: true
+        });
+
+        socket.on("connect_error", (err) => {
+            // alert("Socket Error: " + err.message); // Only enable if really needed, annoying
+            console.error("Socket Error:", err);
+            debugBadge.innerText = "Socket: Error " + err.message;
+            debugBadge.style.color = "red";
+        });
+
+        socket.on("connect", () => {
+             debugBadge.innerText = "Socket: Connected";
+             debugBadge.style.color = "lime";
+        });
+        
         // Auto scroll to bottom with smooth behavior
         const msgArea = document.getElementById('msgArea');
         msgArea.scrollTop = msgArea.scrollHeight;

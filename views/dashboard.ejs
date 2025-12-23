@@ -764,6 +764,9 @@
             if (story) {
                 // MongoDB uses _id, but just in case, check both
                 const id = story._id || story.id;
+                // alert("Debug: Deleting Story ID: " + id); // Temporary debug
+                if (!id) return alert("Error: Story ID is missing!");
+                
                 confirmDelete('story', id);
             }
         }
