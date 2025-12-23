@@ -791,35 +791,39 @@ app.get("/friends/accept/:email", async (req, res) => {
 });
 
 // Friends Page
+// Friends Page
 app.get("/friends", async (req, res) => {
-  if (!req.session.isAuthenticated) return res.redirect("/login");
-  const currentUser = await User.findOne({ email: req.session.userEmail });
-  const users = await User.find({});
-  const usersMap = {};
-  users.forEach((u) => (usersMap[u.email] = u));
+    if (!req.session.isAuthenticated) return res.redirect("/login");
+    try {
+        const currentUser = await User.findOne({ email: req.session.userEmail });
+        const allUsers = await User.find({});
+        const usersMap = {};
+        allUsers.forEach(u => usersMap[u.email] = u);
+        
+        // Prepare lists for EJS
+        const friendsList = (currentUser.friends || []).map(email => usersMap[email]).filter(u => u);
+        const receivedList = (currentUser.friendRequestsReceived || []).map(email => usersMap[email]).filter(u => u);
+        
+        // Suggestions: users who are not me, not my friends, and not in my sent/received requests
+        const suggestionsList = allUsers.filter(u => {
+            if (u.email === currentUser.email) return false;
+            // Check if already friend
+            if (currentUser.friends.includes(u.email)) return false;
+            // Check if request sent
+            if ((currentUser.friendRequestsSent || []).includes(u.email)) return false;
+            // Check if request received
+            if ((currentUser.friendRequestsReceived || []).includes(u.email)) return false;
+            return true;
+        });
 
-  // Construct simplified lists for EJS
-  // The friends.ejs expects `friendsData[email]` which has friends/requests lists containing emails.
-  // It iterates `friendsData[user.email].friends` and looks up `users[f].firstName`.
-  const friendsData = {
-    [currentUser.email]: {
-      friends: currentUser.friends || [],
-      requests_sent: currentUser.friendRequestsSent || [],
-      requests_received: currentUser.friendRequestsReceived || [],
-      suggestions: users
-        .map((u) => u.email)
-        .filter(
-          (e) => e !== currentUser.email && !currentUser.friends.includes(e)
-        ), // naive suggestions
-    },
-  };
-
-  res.render("friends", {
-    user: currentUser,
-    friendsData,
-    users: usersMap,
-    friendRequestsCount: (currentUser.friendRequestsReceived || []).length,
-  });
+        res.render("friends", {
+            user: currentUser,
+            friends: friendsList,
+            received: receivedList,
+            suggestions: suggestionsList,
+            friendRequestsCount: receivedList.length
+        });
+    } catch(e) { console.error(e); res.redirect("/dashboard"); }
 });
 
 // News
