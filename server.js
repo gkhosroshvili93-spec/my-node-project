@@ -95,12 +95,19 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
+const MongoStore = require('connect-mongo');
+
 // Session
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "super-secret-key-georgia",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false, // Changed to false for MongoStore best practice
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI || "mongodb://localhost:27017/socialportal",
+      ttl: 14 * 24 * 60 * 60 // 14 days
+    }),
+    cookie: { maxAge: 14 * 24 * 60 * 60 * 1000 } // 14 days
   })
 );
 
