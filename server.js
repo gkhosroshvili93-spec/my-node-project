@@ -406,7 +406,7 @@ app.get("/dashboard", async (req, res) => {
     res.render("dashboard", {
       user: currentUser,
       users: usersMap, // Passing full map might be heavy but EJS uses it for sidebar contacts (filtering there)
-      newsFeed: newsFeed,
+      news: newsFeed,
       groupedStories,
       friendRequestsCount: (currentUser.friendRequestsReceived || []).length,
       userFriends,
