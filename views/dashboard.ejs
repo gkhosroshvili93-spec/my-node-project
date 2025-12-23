@@ -210,11 +210,11 @@
                 </div>
                 
                 <!-- Hidden Forms -->
-                <form action="/stories/create" method="POST" enctype="multipart/form-data" id="photoStoryForm">
+                <form action="/story/create" method="POST" enctype="multipart/form-data" id="photoStoryForm">
                     <input type="file" name="image" id="storyInput" accept="image/*" style="display: none;" onchange="document.getElementById('photoStoryForm').submit()">
                 </form>
 
-                <form action="/stories/create" method="POST" enctype="multipart/form-data" id="textStoryForm" style="display:none;">
+                <form action="/story/create" method="POST" enctype="multipart/form-data" id="textStoryForm" style="display:none;">
                     <textarea name="text" id="hiddenStoryText"></textarea>
                     <input type="text" name="background" id="hiddenStoryBg">
                 </form>
