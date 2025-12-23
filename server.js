@@ -270,7 +270,7 @@ app.post("/register", async (req, res) => {
     );
 
     res.render("register", {
-      error: "სისტემური შეცდომა",
+      error: "Error: " + e.message, // Show real error for debugging
       formData: req.body || {},
     });
   }
