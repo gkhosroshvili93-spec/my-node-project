@@ -610,7 +610,8 @@ app.get("/chat", async (req, res) => {
     allUsers.forEach((u) => (usersMap[u.email] = u));
 
     const friendRequestsCount = (currentUser.friendRequestsReceived || []).length;
-    const friendsList = currentUser.friends || [];
+    // CRASH FIX: Filter friendsList to ensure user still exists in DB
+    const friendsList = (currentUser.friends || []).filter(email => usersMap[email]);
 
     res.render("chat", {
       user: currentUser,
