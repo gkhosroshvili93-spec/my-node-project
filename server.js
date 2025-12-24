@@ -615,6 +615,9 @@ app.get("/chat", async (req, res) => {
     const filteredRequests = (currentUser.friendRequestsReceived || []).filter(email => usersMap[email]);
     const friendsList = (currentUser.friends || []).filter(email => usersMap[email]);
     
+    // Valid Users for Sidebar (Everyone except self) - Replaces friend-only view
+    const visibleUsers = allUsers.filter(u => u.email !== currentUser.email);
+
     // Update the user object's lists in memory (not DB) so EJS sees clean lists
     currentUser.friendRequestsReceived = filteredRequests;
 
@@ -624,6 +627,7 @@ app.get("/chat", async (req, res) => {
       users: usersMap,
       friendRequestsCount: filteredRequests.length,
       friendsList,
+      visibleUsers, // Pass this new list
       activeChatPartner: 'global',
       messages: [] 
     });
