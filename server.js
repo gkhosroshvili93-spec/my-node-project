@@ -66,7 +66,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 2 * 1024 * 1024 },
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
   fileFilter: (req, file, cb) => {
     const filetypes = /jpeg|jpg|png|gif/;
     const extname = filetypes.test(
@@ -80,6 +80,8 @@ const upload = multer({
     }
   },
 });
+
+
 
 const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
@@ -596,34 +598,50 @@ app.post("/story/delete/:id", async (req, res) => {
 });
 
 // Chat Page
+// Chat Page
 app.get("/chat", async (req, res) => {
   if (!req.session.isAuthenticated) return res.redirect("/login");
   try {
-    // Same mock logic for users data
+    const currentUser = await User.findOne({ email: req.session.userEmail });
+    if (!currentUser) return res.redirect("/logout");
+
     const allUsers = await User.find({});
     const usersMap = {};
     allUsers.forEach((u) => (usersMap[u.email] = u));
 
-    const currentUser = usersMap[req.session.userEmail];
-    const friendRequestsCount = (currentUser.friendRequestsReceived || [])
-      .length;
-    
-    // Fix for chat.ejs filtering
+    const friendRequestsCount = (currentUser.friendRequestsReceived || []).length;
     const friendsList = currentUser.friends || [];
 
     res.render("chat", {
       user: currentUser,
-      currentUser, // EJS uses currentUser in some places, user in others, let's duplicate to be safe or just standardise later. Chat.ejs uses currentUser at line 642.
+      currentUser,
       users: usersMap,
       friendRequestsCount,
       friendsList,
-      activeChatPartner: 'global', // Default
-      messages: [] // Default for first load
+      activeChatPartner: 'global',
+      messages: [] 
     });
   } catch (e) {
     console.error(e);
     res.redirect("/dashboard");
   }
+});
+
+// Profile Avatar Upload
+app.post("/profile/upload-avatar", upload.single("avatar"), async (req, res) => {
+  if (!req.session.isAuthenticated) return res.redirect("/login");
+  try {
+    if (req.file) {
+      const avatarUrl = "/uploads/" + req.file.filename;
+      await User.updateOne(
+        { email: req.session.userEmail },
+        { $set: { avatar: avatarUrl } }
+      );
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  res.redirect("/settings"); // Redirect back to settings or dashboard
 });
 
 // Chat API History
