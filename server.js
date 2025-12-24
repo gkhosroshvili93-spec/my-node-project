@@ -365,6 +365,7 @@ app.get("/dashboard", async (req, res) => {
   if (!req.session.isAuthenticated) return res.redirect("/login");
   try {
     const currentUser = await User.findOne({ email: req.session.userEmail });
+    if (!currentUser) return res.redirect('/logout');
 
     // Fetch all needed data
     const allPosts = await Post.find({}).sort({ timestamp: -1 });
