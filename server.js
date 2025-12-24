@@ -368,14 +368,22 @@ app.get("/dashboard", async (req, res) => {
     if (!currentUser) return res.redirect('/logout');
 
     // Fetch all needed data
+    // Fetch all needed data
     const allPosts = await Post.find({}).sort({ timestamp: -1 });
+    
+    // Moved UP: Fetch users first to filter orphans
+    const allUsersList = await User.find({});
+    const usersMap = {}; 
+    allUsersList.forEach((u) => (usersMap[u.email] = u));
+
     const groupedStories = {};
     const allStories = await Story.find({});
 
     // Get authors for stories to mimic grouping
-    // Grouping logic: Robust
     for (const s of allStories) {
-      if (!s.userId) continue; // Skip orphan stories
+      if (!s.userId) continue; 
+      if (!usersMap[s.userId]) continue; // Filter deleted users
+
       if (!groupedStories[s.userId]) {
         groupedStories[s.userId] = {
           stories: [],
@@ -390,13 +398,6 @@ app.get("/dashboard", async (req, res) => {
     let newsFeed = [];
     // Allow ONLY friends (accepted) and own posts + Public posts logic
     // Current logic was: all posts except FriendsOnly ones from non-friends.
-
-    // We need 'users' object for EJS (contacts sidebar)
-    // Ideally we only fetch friends, but code uses 'users' global object.
-    // Let's fetch all users for now (Not scalable for millions, but fine for small app)
-    const allUsersList = await User.find({});
-    const usersMap = {}; // Map for O(1) access
-    allUsersList.forEach((u) => (usersMap[u.email] = u));
 
     newsFeed = allPosts.filter((p) => {
       const isMyPost = p.userId === currentUser.email;
