@@ -609,15 +609,18 @@ app.get("/chat", async (req, res) => {
     const usersMap = {};
     allUsers.forEach((u) => (usersMap[u.email] = u));
 
-    const friendRequestsCount = (currentUser.friendRequestsReceived || []).length;
-    // CRASH FIX: Filter friendsList to ensure user still exists in DB
+    // CRASH FIX: Filter both lists to remove deleted users
+    const filteredRequests = (currentUser.friendRequestsReceived || []).filter(email => usersMap[email]);
     const friendsList = (currentUser.friends || []).filter(email => usersMap[email]);
+    
+    // Update the user object's lists in memory (not DB) so EJS sees clean lists
+    currentUser.friendRequestsReceived = filteredRequests;
 
     res.render("chat", {
       user: currentUser,
       currentUser,
       users: usersMap,
-      friendRequestsCount,
+      friendRequestsCount: filteredRequests.length,
       friendsList,
       activeChatPartner: 'global',
       messages: [] 
