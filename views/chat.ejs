@@ -503,7 +503,7 @@
                     </div>
                 </a>
 
-                <% friendsList.forEach(u => { %>
+                <% visibleUsers.forEach(u => { %>
                     <a href="/chat?with=<%= u.email %>" class="user-item <%= activeChatPartner === u.email ? 'active' : '' %>" data-email="<%= u.email %>">
                         <div class="avatar-wrapper">
                             <img src="<%= u.avatar %>" class="avatar-img">
